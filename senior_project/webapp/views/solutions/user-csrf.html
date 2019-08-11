@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Changing Username CSRF</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>When changing your username, you may notice a CSRF token saved as a hidden input <img src="/images/solutions/csrf-token.png"><br>
+      If you tamper with the token by say removing some values from it or even removing it altogether, you will see that it does not affect your ability to change username. This means that the server is not checking
+      for the existence of the token when submitting a new username. To demonstrate how to exploit this vulnerability in the payloads directory there is a file called <span class="w3-text-red">username-csrf.html</span>
+      if you load this HTML page by double-clicking on it you will see an "OK" message on the screen now if you navigate back to your account page you will see that your username was changed to "HACKED!".
+    </p>
+  </div>
+
+</body>
+</html>

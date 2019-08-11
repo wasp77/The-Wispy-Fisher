@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Product Page CSRF</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>When viewing a product, you will see a CSRF token added as a hidden input <br><img src="/images/solutions/csrf-token.png" alt=""><br> if you try to remove values from it or the whole element, you will get an alert
+      <br><img src="/images/solutions/csrf-verify.png"><br> and will not be able to make the purchase. However, you can change the individual values of the token just as long as you
+      do not remove any. This means that the server is checking that the token is present and that it has a certain length but not the actual values. To demonstrate how to exploit this
+      run the <span class="w3-text-red">buy-csrf.html</span> file found in the payloads directory. You will see an "OK" message on the screen, and if you navigate back to your account page, you will
+      see in your purchase history that you bought the standard fly rod without knowing it.
+    </p>
+  </div>
+
+</body>
+</html>

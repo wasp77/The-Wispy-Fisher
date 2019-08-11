@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Contact</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"
+  integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk="
+  crossorigin="anonymous">
+</script>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-card w3-left-align w3-large w3-black">
+    <button class="w3-bar-item w3-round w3-red w3-medium" onclick="w3_open()" id="hint-btn">Hints</button>
+    <a href="/storefront" class="w3-bar-item w3-button w3-padding-large w3-hover-grey">Home</a>
+    <a href="/login" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Login</a>
+    <a href="/account" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Account</a>
+    <a href="/about" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">About</a>
+    <a href="contact" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-grey">Contact</a>
+    <a href="/shop" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">shop</a>
+  </div>
+</div>
+
+<!-- Hint pop out -->
+<div class="ui-widget-content w3-sidebar w3-animate-left" style="opacity:.90" id="mySidebar">
+  <iframe src="/hints/contact" id="myFrame"></iframe>
+</div>
+
+<!-- Feedback section -->
+<div class="w3-container" style="padding:120px 150px">
+  <header>
+    <h1>Give Us Your Feedback</h1>
+  </header>
+  <form class="w3-container w3-card-4 w3-padding">
+    <p>
+      <label class="w3-text-grey">Name</label>
+      <input id="username" class="w3-input w3-border" type="text" required/>
+    </p>
+    <p>
+      <label class="w3-text-grey">Email</label>
+      <input class="w3-input w3-border" type="email" required />
+    </p>
+    <p>
+      <label class="w3-text-grey">Subject</label>
+      <textarea id="msg" class="w3-input w3-border" style="resize:none;" required></textarea>
+    </p>
+    <button id="feedback-btn" type="submit" class="w3-btn w3-grey">Submit</button>
+  </form>
+  <div class="w3-container w3-center w3-padding w3-card-4" id="feedback">
+    <h1>Check Out What Others Said</h1>
+  </div>
+</div>
+
+</body>
+<script>
+$.ajax({
+    type: "GET",
+    url: "/feedback",
+    success:function(data){
+      for (var i = 0; i < data.length; i++) {
+        $('#feedback').append('<span class="w3-large"><i>"' + data[i].msg + '" -' + data[i].name + '</span><br>');
+      }
+    }
+});
+
+$('#feedback-btn').click(function () {
+  var feedback = $('#msg').val();
+  var username = $('#username').val().replace(/\s/g,'');
+  if (feedback != '') {
+    if (feedback.toLowerCase().indexOf('script') >= 0) {
+      alert("Nice try but our XSS filtering is unbreakable!")
+    } else {
+      $.ajax({
+          type: "POST",
+          url: "/feedback",
+          data: {username: username, feedback: feedback},
+          success:function(data){
+            location.reload();
+          }
+      });
+    }
+  }  
+});
+
+$('#mySidebar').hide();
+
+$( function() {
+  $( "#mySidebar" ).resizable({
+    containment: 'body',
+    ghost: true
+  });
+});
+
+function w3_open() {
+  $('#hint-btn').hide();
+  document.getElementById("mySidebar").style.width = "25%";
+  document.getElementById("mySidebar").style.overflowX = "auto";
+  document.getElementById("mySidebar").style.overflowY = "hidden";
+  document.getElementById("mySidebar").style.resize = "both";
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myFrame").style.width = "100%";
+  document.getElementById("myFrame").style.height = "100%";
+  document.getElementById("myFrame").style.border = "none";
+}
+function w3_close() {
+  $('#hint-btn').show();
+  $('#mySidebar').hide();
+}
+</script>
+</html>

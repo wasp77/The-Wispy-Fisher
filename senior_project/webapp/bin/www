@@ -1,0 +1,138 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+var app = require('../app');
+var debug = require('debug')('webapp:server');
+var http = require('http');
+var db = require('../sqlitedb');
+
+/**
+* Initailize database
+*/
+db.serialize(function() {
+  db.run("CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY,username TEXT,passwd TEXT)");
+  console.log("created user table");
+  db.run("CREATE TABLE IF NOT EXISTS review (id INTEGER,content TEXT, FOREIGN KEY (id) REFERENCES item_id(id))");
+  console.log("created review table");
+  db.run("CREATE TABLE IF NOT EXISTS feedback (id INTEGER PRIMARY KEY,name TEXT,msg TEXT)");
+  console.log("created feedback table");
+  db.run("CREATE TABLE IF NOT EXISTS item (id INTEGER PRIMARY KEY,name TEXT,description TEXT,price INTEGER)");
+  console.log("created item table");
+  db.run("CREATE TABLE IF NOT EXISTS purchases (user_id INTEGER,item_id INTEGER, FOREIGN KEY (user_id) REFERENCES user(id), FOREIGN KEY (item_id) REFERENCES item(id))");
+  console.log("created purchases table");
+  db.run("DELETE FROM user");
+  console.log("Wiped user table");
+  db.run("DELETE FROM review");
+  console.log("Wiped review table")
+  db.run("DELETE FROM purchases");
+  console.log("Wiped purchases");
+  db.run("DELETE FROM feedback");
+  console.log("wiped feedback");
+  db.run("DELETE FROM item");
+  console.log("Wiped item table");
+  db.run("INSERT INTO user (username,passwd) VALUES ('admin', '@admin123')");
+  console.log("added admin acount");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Standard Fly Rod', 'Does not get anymore standard than this.', 77.77)");
+  console.log("added rod 1");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Advanced Fly Rod', 'Do not let the price fool you this is cheap.', 7777.77)");
+  console.log("added rod 2");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Basic Reel', 'This reel is cheaply made and the price reflects that.', 7.77)");
+  console.log("added reel 1");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Nice Reel', 'This reel is nice, very nice.', 777.77)");
+  console.log("added reel 2");
+  db.run("INSERT INTO item (name,description,price) VALUES ('A Hook', 'This puppy is sharp.', .77)");
+  console.log("added hook 1");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Wicked Sharp Hook', 'This hook may even be too sharp.', 1.77)");
+  console.log("added hook 2");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Single Fly', 'You are going to need one of these.', 14.07)");
+  console.log("added fly 1");
+  db.run("INSERT INTO item (name,description,price) VALUES ('Two Flies', 'Why have one when you can have two?', 49.14)");
+  console.log("added fly 2");
+  db.run("INSERT INTO feedback (name,msg) VALUES ('Waspy', 'Unbelievable shop! Would definitely reccommend to a friend!')");
+  console.log("added wispy feedback")
+  db.run("INSERT INTO feedback (name,msg) VALUES ('Brutus', 'Security could use a little work.')");
+  console.log("added brutus feedback")
+});
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}

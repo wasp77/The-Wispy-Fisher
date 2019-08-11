@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Contact Page XSS</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>
+      The contact page is vulnerable to persistent XSS. If you leave some feedback, you will see that it is immediately returned in the "Check Out What Others Said" section. If you look at the source code, you will see that your
+      feedback is returned in a span element. However when trying to execute the standard XSS payload <span class="w3-text-red">&lt/span&gt&ltscript&gtalert("XSS")&lt/script&gt</span> you will see
+      <br><img src="/images/solutions/xss-filter.png" alt=""><br> This alert means that something in our payload is getting blocked by a filter. If you are diligent when looking at the source code, you will see that the filter is
+      checking for the keyword "script." Therefore, in order to trigger the XSS we need to use an alternative payload like <span class="w3-text-red">&lt/span&gt&ltimg src="x" onerror=alert("XSS")&gt</span>.
+      Now, whenever you visit the page, you will see the XSS trigger.
+    </p>
+  </div>
+
+</body>
+</html>

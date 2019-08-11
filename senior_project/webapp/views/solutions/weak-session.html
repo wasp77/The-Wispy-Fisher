@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Weak Session Token</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>After signing in you will see a session token saved in your cookies <img src="/images/solutions/session.png">. To test for weaknesses in this token create two separate accounts and using an incognito window or a
+      separate browser sign into both accounts. Next, take the two session tokens, and base64 decode them using an online decoder. You will get something like <span class="w3-text-red">{"secret":"wasp","id":"3"}</span>
+      where the "wasp" is a secret string and "id" is your ID. Now if you swap in the ID value of your other account and base64 encode you can use this new session token in place of your previous one, and you will see that
+      you are logged into the other account. To change your session token use your browser's JavaScript console as described in the guide. We can up the severity of this vulnerability replacing the ID value with 1 and
+      log yourself into the administrator account.
+    </p>
+  </div>
+
+</body>
+</html>

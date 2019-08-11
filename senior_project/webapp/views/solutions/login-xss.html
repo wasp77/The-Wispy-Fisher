@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Login XSS</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>The login page has a reflected XSS vulnerability on it. You may have noticed when you sign up there us a greeting message displayed with your username. For example, signing up with the username "test" we get
+      <br><img src="/images/solutions/signup-msg.png"><br> If you then check the page source, you can see the username is placed in a paragraph. Therefore, in order to exploit the XSS you can create a payload like
+      <span class="w3-text-red">"&lt/p&gt&ltscript&gtalert("XSS")&lt/script&gt</span> and set this as your username. You are then greeted with
+      <br><img src="/images/solutions/xss.png"><br> showing that you were able to exploit the XSS vulnerability and execute the script on the page.
+    </p>
+  </div>
+
+</body>
+</html>

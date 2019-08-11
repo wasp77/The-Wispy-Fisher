@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Shop</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"
+  integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk="
+  crossorigin="anonymous">
+</script>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-card w3-left-align w3-large w3-black">
+    <button class="w3-bar-item w3-round w3-red w3-medium" onclick="w3_open()" id="hint-btn">Hints</button>
+    <a href="/storefront" class="w3-bar-item w3-button w3-padding-large w3-hover-grey">Home</a>
+    <a href="/login" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Login</a>
+    <a href="/account" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Account</a>
+    <a href="/about" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">About</a>
+    <a href="contact" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Contact</a>
+    <a href="/shop" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-grey">shop</a>
+    <input type="text" class="w3-bar-item w3-input w3-right w3-padding-large w3-round" placeholder="Search.." id="search">
+  </div>
+</div>
+<!-- Hint pop out -->
+<div class="ui-widget-content w3-sidebar w3-animate-left" style="opacity:.90" id="mySidebar">
+  <iframe src="/hints/shop" id="myFrame"></iframe>
+</div>
+
+<!-- Header -->
+<div class="w3-display-container w3-container" style="padding: 0px 150px;" >
+  <img src="/images/backgrounds/background2.jpg" style="width:100%">
+  <div class="w3-display-middle w3-container w3-text-white">
+    <h1 class="w3-margin">The Wispy Fisher Store</h1>
+  </div>
+</div>
+
+<!-- Product list -->
+<div class="w3-container" style="padding: 0px 150px;">
+  <h2 class="w3-center">Products</h2>
+  <p class="w3-red" id="empty-msg"></p>
+  <ul class="w3-ul w3-card-4 w3-center" id="product-ul">
+  </ul>
+</div>
+
+</body>
+<script>
+  $(document).ready(function () {
+    $.ajax({
+        type: "GET",
+        url: "/items",
+        success:function(data){
+          for (var i = 0; i < data.length; i++) {
+            $('#product-ul').append('<li class="w3-bar w3-padding">' +
+            '<a href="/shop/product/id/' + data[i].id + '" class="w3-bar-item" style="text-decoration:none;">' +
+            '<img class="w3-margin-bottom" src="/images/products/' + data[i].id + '.jpg" style="width:200px;">' +
+            '<div><span>' + data[i].name + '</span><br>' +
+            '<span>$' + data[i].price + '</span></div></a></li>')
+          }
+        }
+    });
+  });
+
+  $('#search').keyup(function(event) {
+    var key = event.which;
+    if (key == 13) {
+      var query = $('#search').val();
+      $.ajax({
+          type: "GET",
+          url: "/search",
+          data: {name: query},
+          success:function(data){
+            if (data.length == 0) {
+              $('#product-ul').hide();
+              $('#empty-msg').html("*No items found for '" + query +"'");
+            } else {
+              $('#product-ul').show();
+              $('#product-ul').empty();
+              $('#empty-msg').hide();
+              for (var i = 0; i < data.length; i++) {
+                $('#product-ul').append('<li class="w3-bar w3-padding">' +
+                '<a href="/shop/product/id/' + data[i].id + '" class="w3-bar-item" style="text-decoration:none;">' +
+                '<img src="/images/products/' + data[i].id + '.jpg" style="width:200px;">' +
+                '<div><span>' + data[i].name + '</span><br>' +
+                '<span>$' + data[i].price + '</span></div></a></li>')
+              }
+            }
+          },
+          error: function(err) {
+            $('#product-ul').hide();
+            $('#empty-msg').html(err.responseText);
+          }
+      });
+    }
+  });
+
+  $('#mySidebar').hide();
+
+  $( function() {
+    $( "#mySidebar" ).resizable({
+      containment: 'body',
+      ghost: true
+    });
+  });
+
+  function w3_open() {
+    $('#hint-btn').hide();
+    document.getElementById("mySidebar").style.width = "25%";
+    document.getElementById("mySidebar").style.overflowX = "auto";
+    document.getElementById("mySidebar").style.overflowY = "hidden";
+    document.getElementById("mySidebar").style.resize = "both";
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myFrame").style.width = "100%";
+    document.getElementById("myFrame").style.height = "100%";
+    document.getElementById("myFrame").style.border = "none";
+  }
+  function w3_close() {
+    $('#hint-btn').show();
+    $('#mySidebar').hide();
+  }
+</script>
+</html>

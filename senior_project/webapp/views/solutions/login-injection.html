@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Login SQL Injection</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>The login page has a SQL injection vulnerability in the login functionality. This vulnerability can be leveraged to log in as a user only knowing their username. You can test this using your account; however
+      to showcase how severe these vulnerabilities are you can use it to login into the admin account. The problem occurs because the server is just checking that the database query for the password is valid, therefore
+      if we craft a payload as described in the guide's SQL injection section <span class="w3-text-red">' or '1'='1</span> and enter this in the password field, we can see the login works. It works because the
+      payload creates a SQL statement that is always true. Now, all we have to do to sign into the administrative account is to determine the administrator's username. Conveniently, they left a comment
+      on the login page <img src="/images/solutions/admin-comment.png"><br> so to complete the full exploit enter "admin" as the username and the payload for the password and see yourself logged in as the site administrator.
+    </p>
+  </div>
+
+</body>
+</html>

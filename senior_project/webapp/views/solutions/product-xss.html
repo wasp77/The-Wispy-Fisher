@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Product Page XSS</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>The product page is vulnerable to persistent XSS. Try writing a review, and you will see that it is immediately placed on the page. If you check the element that holds the review you can see it is a li
+      element. Therefore, the payload <span class="w3-text-red">&lt/li&gt&ltscript&gtalert("XSS")&lt/script&gt</span> entered as a review will trigger the XSS.
+      <br><img src="/images/solutions/xss.png"><br>
+      You can see how this is persistent because now every time you visit that product page you will see the XSS payload trigger.
+    </p>
+  </div>
+
+</body>
+</html>

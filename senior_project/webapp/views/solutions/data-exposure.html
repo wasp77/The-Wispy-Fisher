@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Course Page Data Exposure</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>When visiting the course page, we can see that there is very little functionality on the page. However, if you look at the URL you can see it has exposed an endpoint that you have not seen before
+      <span>localhost:3000/<span class="w3-text-red">docs</span>/form</span> this seems like it could contain other files. Sure enough when you visit <span>localhost:3000/docs/</span>
+      you are greeted with two files, and one is clearly not meant to be available to the public.
+    </p>
+    <img src="/images/solutions/confidential.png">
+  </div>
+
+</body>
+</html>

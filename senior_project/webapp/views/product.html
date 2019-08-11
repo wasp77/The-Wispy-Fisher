@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Shopping</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"
+  integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk="
+  crossorigin="anonymous">
+</script>
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-card w3-left-align w3-large w3-black">
+    <button class="w3-bar-item w3-round w3-red w3-medium" onclick="w3_open()" id="hint-btn">Hints</button>
+    <a href="/storefront" class="w3-bar-item w3-button w3-padding-large w3-hover-grey">Home</a>
+    <a href="/login" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Login</a>
+    <a href="/account" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Account</a>
+    <a href="/about" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">About</a>
+    <a href="/contact" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">Contact</a>
+    <a href="/shop" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-grey">shop</a>
+  </div>
+</div>
+
+<!-- Hint pop out -->
+<div class="ui-widget-content w3-sidebar w3-animate-left" style="opacity:.90" id="mySidebar">
+  <iframe src="/hints/product" id="myFrame"></iframe>
+</div>
+
+<div class="w3-container" style="padding:128px 150px">
+  <div class="w3-row w3-padding-large">
+    <div class="w3-col w3-half w3-center w3-padding-large w3-card">
+      <img id="pic" src="">
+    </div>
+    <div class="w3-col w3-half w3-padding">
+      <div class="w3-padding">
+        <h1 class="w3-xxlarge w3-border-bottom" id="title"></h1>
+        <p id="description"></p>
+      </div>
+      <div class="w3-padding">
+        <span id="price"></span>
+      </div>
+      <div class="w3-padding">
+        <button type="w3-btn" class="w3-green w3-xlarge" id="buy-btn">Buy</button>
+        <input type="hidden" id="_csrf">
+      </div>
+    </div>
+  </div>
+
+  <div class="w3-row w3-padding-large">
+    <div class="w3-col w3-half">
+      <h1>Reviews:</h1>
+      <ul class="w3-ul w3-padding" id="review-ul">
+
+      </ul>
+    </div>
+  </div>
+
+  <div class="w3-row w3-padding-large">
+    <div class="w3-col w3-half w3-center">
+      <h1>Write Your Own Review</h1>
+      <div>
+        <textarea class="w3-input w3-border" style="resize:vertical" placeholder="Your review" id="review-ta"></textarea>
+      </div>
+      <div class="w3-padding-large">
+        <button type="w3-btn" class="w3-green w3-large" id="review-btn">Submit Review</button>
+        <p class="w3-text-red" id="error_msg"></p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+  $('#_csrf').attr('value',makeToken(14));
+  var i = window.location.href.split('/');
+  var id = i[6];
+
+  $(document).ready(function(){
+    var endpoint = "/product/id/" + id;
+    $.ajax({
+      type: "GET",
+      url: "/item",
+      data: {id: id},
+      success:function(product){
+        $('#pic').attr('src',"/images/products/"+product.id+".jpg");
+        $('#title').html(product.name);
+        $('#description').html(product.description);
+        $('#price').html("Price: $"+product.price)
+      }
+    });
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/reviews",
+    data: {id: id},
+    success:function(data){
+      $.each(data, function(i, row) {
+        $('#review-ul').append('<li class="w3-border-bottom"><i>"'+row.content+'"</i></li>');
+      })
+    }
+  });
+
+  $('#review-ta').keyup(function (event) {
+    var key = event.which;
+    if (key == 13) {
+      document.getElementById("review-btn").click();
+    }
+  });
+
+  $('#review-btn').click(function() {
+    var content = $('#review-ta').val();
+    if (content != '') {
+      $.ajax({
+        type: "POST",
+        url: "/reviews",
+        data: {id: id, content: content},
+        success:function(){
+          window.location = "/shop/product/id/" + id;
+        }
+      });
+    } else {
+      $('#error_msg').html("No review entered.")
+    }
+  });
+
+  $('#buy-btn').click(function() {
+    var _csrf = $('#_csrf').val();
+    console.log(_csrf);
+    $.ajax({
+      type: "POST",
+      url: "/confirmation",
+      data: {id: id, _csrf:_csrf},
+      success:function(){
+        window.location = "/confirmation";
+      },
+      error:function(data){
+        if (data.status == 400) {
+          alert("Could not verify csrf token!")
+        }
+      }
+    });
+  });
+
+  $('#mySidebar').hide();
+
+  $( function() {
+    $( "#mySidebar" ).resizable({
+      containment: 'body',
+      ghost: true
+    });
+  });
+
+  function w3_open() {
+    $('#hint-btn').hide();
+    document.getElementById("mySidebar").style.width = "25%";
+    document.getElementById("mySidebar").style.overflowX = "auto";
+    document.getElementById("mySidebar").style.overflowY = "hidden";
+    document.getElementById("mySidebar").style.resize = "both";
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myFrame").style.width = "100%";
+    document.getElementById("myFrame").style.height = "100%";
+    document.getElementById("myFrame").style.border = "none";
+  }
+
+  function w3_close() {
+    $('#hint-btn').show();
+    $('#mySidebar').hide();
+  }
+
+  function makeToken(length) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < length; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    var token = btoa(text);
+    return token.replace('=','');
+  }
+
+</script>
+</html>

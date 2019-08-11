@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"
+  integrity="sha256-0YPKAwZP7Mp3ALMRVB2i8GXeEndvCq3eSl/WsAl1Ryk="
+  crossorigin="anonymous">
+</script>
+<body class="w3-black">
+<div class="w3-top">
+  <!-- This comment should definitely not have been left behind -admin -->
+  <div class="w3-bar w3-card w3-light-gray">
+    <button class="w3-bar-item w3-round w3-red" onclick="w3_open()" id="hint-btn">Hints</button>
+    <h2 class="w3-bar-item w3-center w3-padding-large">
+      <a href="/storefront" style="text-decoration:none;">The Wispy Fisher</a>
+    </h2>
+    <table class=" w3-bar-item w3-right w3-padding-large w3-tables">
+      <tr>
+        <td>
+          <label>Username</label>
+        </td>
+        <td>
+          <label>Password</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input class="w3-input w3-border w3-sand" type="text" id="username-signin">
+        </td>
+        <td>
+          <input class="w3-input w3-border w3-sand" type="text" id="passwd-signin">
+        </td>
+        <td>
+          <button class="w3-btn w3-border w3-blue" id="signin-btn">Login</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label class="w3-bar-item w3-center w3-padding-large" style="color:red;" id="error_msg"></label>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Hint pop out -->
+<div class="ui-widget-content w3-sidebar w3-animate-left" style="opacity:.90" id="mySidebar">
+  <iframe src="/hints/login" id="myFrame"></iframe>
+</div>
+
+<!--Section to create an account-->
+<div class="w3-container w3-light-gray w3-center" style="padding:250px 150px;">
+  <header>
+    <h1>Create A New Account</h1>
+  </header>
+  <div class="w3-container w3-center w3-padding-64">
+    <table class="w3-table">
+      <tr>
+        <td><input class="w3-input w3-border" type="text" placeholder="username" id="username-signup"></td>
+      </tr>
+      <tr>
+        <td><input class="w3-input w3-border" type="text" placeholder="password" id="passwd-signup"></td>
+      </tr>
+      <tr class="w3-center">
+        <td>
+          <button class="w3-btn w3-border w3-green" id="signup-btn">Sign Up</button>
+        </td>
+      </tr>
+    </table>
+    <p class="w3-text-green w3-large" id="signup-response"></p>
+  </div>
+</div>
+
+</body>
+<script>
+// Get the input field
+var usersignup = document.getElementById("username-signup");
+var pswdsignup = document.getElementById("passwd-signup");
+var usersignin = document.getElementById("username-signin");
+var pswdsignin = document.getElementById("passwd-signin");
+
+usersignup.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("signup-btn").click();
+  }
+});
+
+pswdsignup.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("signup-btn").click();
+  }
+});
+usersignin.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("signin-btn").click();
+  }
+});
+
+pswdsignin.addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) {
+    document.getElementById("signin-btn").click();
+  }
+});
+
+$('#signup-btn').click(function(){
+  var username = $('#username-signup').val().replace(/\s/g,'');
+  var passwd = $('#passwd-signup').val().replace(/\s/g,'');
+  if (username === '' || passwd === '') {
+    $('#signup-response').html('Both username and password are required.');
+  } else {
+    $.ajax({
+        type: "POST",
+        url: "/create-user",
+        data: {username: username, password: passwd},
+        success:function(){
+            $('#signup-response').html(username + '! Thank for signing up to the Wispy Fisher.');
+        },
+        error: function(data){
+            if (data.status == 400) {
+              $('#signup-response').html('Sorry that username already exists!');
+            }
+        }
+    });
+  }
+});
+
+$('#signin-btn').click(function(){
+  var username = $('#username-signin').val().replace(/\s/g,'');
+  var passwd = $('#passwd-signin').val().replace(/\s/g,'');
+  if (username != '' && passwd != '') {
+    $.ajax({
+        type: "POST",
+        url: "/login",
+        data: {username: username, password: passwd},
+        success:function(data){
+          console.log(atob(Cookies.get('session_id')))
+          var session = JSON.parse(atob(Cookies.get('session_id')));
+          localStorage.setItem("id", btoa(session.id));
+          window.location = "storefront";
+        },
+        error: function(data) {
+          if (data.responseText == 'username') {
+            $('#error_msg').html('*Invalid username or password')
+          }
+          if (data.responseText == 'password') {
+            $('#error_msg').html('*Invalid password')
+          }
+        }
+    });
+  }
+});
+
+$('#mySidebar').hide();
+
+$( function() {
+  $( "#mySidebar" ).resizable({
+    containment: 'body',
+    ghost: true
+  });
+});
+
+function w3_open() {
+  $('#hint-btn').hide();
+  document.getElementById("mySidebar").style.width = "25%";
+  document.getElementById("mySidebar").style.overflowX = "auto";
+  document.getElementById("mySidebar").style.overflowY = "hidden";
+  document.getElementById("mySidebar").style.resize = "both";
+  document.getElementById("mySidebar").style.display = "block";
+  document.getElementById("myFrame").style.width = "100%";
+  document.getElementById("myFrame").style.height = "100%";
+  document.getElementById("myFrame").style.border = "none";
+}
+function w3_close() {
+  $('#hint-btn').show();
+  $('#mySidebar').hide();
+}
+</script>
+</html>

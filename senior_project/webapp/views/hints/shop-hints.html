@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<body>
+  <button onclick="w3_close()" class="w3-bar-item w3-large w3-right">&times;</button>
+  <div class="w3-container">
+    <ul class="w3-ul">
+      <h1 class="w3-large w3-text-red">Verbose Error:</h1>
+      <li>
+        <span class="w3-button w3-text-blue" onclick="getHint(4)">Hint 1</span>
+        <div id="hint4-text" style="display:none;">
+          <p>Where on this page could we trigger an error?</p>
+        </div>
+      </li>
+      <li id="hint-5" style="display:none;">
+        <span class="w3-button w3-text-blue" onclick="getHint(5)">Hint 2</span>
+        <div id="hint5-text" style="display:none;">
+          <p>What type of input is the search bar expecting?</p>
+        </div>
+      </li>
+      <li id="hint-6" style="display:none;">
+        <span class="w3-button w3-text-blue" onclick="getHint(6)">Hint 3</span>
+        <div id="hint6-text" style="display:none;">
+          <p>Could try some SQL.</p>
+        </div>
+      </li>
+    </ul>
+    <a href="/#secMis" class="w3-text-green" style="text-decoration:none" target="_blank">Guide</a><br>
+    <a href="/solutions/shop-error" class="w3-text-green" style="text-decoration:none" target="_blank">Solution</a>
+  </div>
+  <div class="w3-container">
+    <ul class="w3-ul">
+      <h1 class="w3-large w3-text-red">SQL Injection:</h1>
+      <li>
+        <span class="w3-button w3-text-blue" onclick="getHint(1)">Hint 1</span>
+        <div id="hint1-text" style="display:none;">
+          <p>How can we get access to other tables in the database?</p>
+        </div>
+      </li>
+      <li id="hint-2" style="display:none;">
+        <span class="w3-button w3-text-blue" onclick="getHint(2)">Hint 2</span>
+        <div id="hint2-text" style="display:none;">
+          <p>This may be a good time to create a UNION statement.</p>
+        </div>
+      </li>
+      <li id="hint-3" style="display:none;">
+        <span class="w3-button w3-text-blue" onclick="getHint(3)">Hint 3</span>
+        <div id="hint3-text" style="display:none;">
+          <p>First figure out how many columns are being returned. Next, determine which column you can inject into. Lastly, determine how to find tables and their columns with
+            the knowledge that this site uses a SQLite database.
+           </p>
+        </div>
+      </li>
+    </ul>
+    <a href="/#injection" class="w3-text-green" style="text-decoration:none" target="_blank">Guide</a><br>
+    <a href="/solutions/search-injection" class="w3-text-green" style="text-decoration:none" target="_blank">Solution</a>
+  </div>
+</body>
+<script>
+function w3_close() {
+  console.log("init");
+  window.parent.w3_close();
+}
+function getHint(num) {
+  $('#hint' + num + '-text').toggle();
+  if (num % 3 != 0) {
+    next = num + 1;
+    $('#hint-' + next).show();
+  }
+}
+</script>
+</html>
